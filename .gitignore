@@ -1,12 +1,29 @@
+# Build Folders
 bin/
 obj/
+TestResults/
+
+# User / VS Files
 *.user
 *.suo
 *.vs/
 *.vscode/
-appsettings.Development.json
-appsettings.Local.json
+
+# Logs
 *.log
-TestResults/
+
+# Database / EF Core files
 *.db
 *.sqlite
+
+# Config files with secrets
+appsettings.json
+appsettings.Development.json
+appsettings.Local.json
+
+# Rider / JetBrains
+.idea/
+
+# Coverage
+coverage/
+*.coverage
