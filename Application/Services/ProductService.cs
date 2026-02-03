@@ -32,13 +32,13 @@ namespace Application.Services
 
         public async Task<ProductDto?> GetByProductIdAsync(int id)
         {
-            var entity = await _repo.GetByIdAsync(id);
+            var entity = await _repo.GetByIdAsync(id, true);
             return entity == null ? null : _mapper.Map<ProductDto>(entity);
         }
 
         public async Task<ProductDto?> UpdateProductAsync(int id, UpdateProductDto dto)
         {
-            var entity = await _repo.GetByIdAsync(id);
+            var entity = await _repo.GetByIdAsync(id, false);
 
             if (entity == null)
                 return null;
@@ -54,7 +54,7 @@ namespace Application.Services
 
         public async Task<bool> DeleteProductAsync(int id, string deletedBy)
         {
-            var product = await _repo.GetByIdAsync(id);
+            var product = await _repo.GetByIdAsync(id, true);
 
             if (product == null || product.DeletedAt != null)
                 return false;
