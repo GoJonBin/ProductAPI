@@ -56,7 +56,7 @@ namespace Tests.Application.Services
         [Fact]
         public async Task GetByProductIdAsync_ShouldReturnNull_WhenProductDoesNotExist()
         {
-            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Product?)null);
+            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>(), true)).ReturnsAsync((Product?)null);
 
             var result = await _service.GetByProductIdAsync(1);
 
@@ -69,7 +69,7 @@ namespace Tests.Application.Services
             var product = new Product { Id = 1, Name = "TestProduct" };
             var dto = new ProductDto { Id = 1, Name = "TestProduct" };
 
-            _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(product);
+            _repoMock.Setup(r => r.GetByIdAsync(1, true)).ReturnsAsync(product);
             _mapperMock.Setup(m => m.Map<ProductDto>(product)).Returns(dto);
 
             var result = await _service.GetByProductIdAsync(1);
@@ -107,7 +107,7 @@ namespace Tests.Application.Services
         [Fact]
         public async Task UpdateProductAsync_ShouldReturnNull_WhenProductNotFound()
         {
-            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Product?)null);
+            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>(), false)).ReturnsAsync((Product?)null);
 
             var result = await _service.UpdateProductAsync(1, new UpdateProductDto { Name = "Updated" });
 
@@ -121,7 +121,7 @@ namespace Tests.Application.Services
             var dto = new UpdateProductDto { Name = "NewName" };
             var productDto = new ProductDto { Id = 1, Name = "NewName" };
 
-            _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(product);
+            _repoMock.Setup(r => r.GetByIdAsync(1, false)).ReturnsAsync(product);
             _mapperMock.Setup(m => m.Map(dto, product)).Callback<UpdateProductDto, Product>((d, p) => p.Name = d.Name);
             _mapperMock.Setup(m => m.Map<ProductDto>(product)).Returns(productDto);
             _repoMock.Setup(r => r.UpdateAsync(product)).Returns(Task.CompletedTask);
@@ -141,7 +141,7 @@ namespace Tests.Application.Services
         [Fact]
         public async Task DeleteProductAsync_ShouldReturnFalse_WhenProductNotFound()
         {
-            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Product?)null);
+            _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>(), false)).ReturnsAsync((Product?)null);
 
             var result = await _service.DeleteProductAsync(1, "tester");
 
@@ -152,7 +152,7 @@ namespace Tests.Application.Services
         public async Task DeleteProductAsync_ShouldReturnFalse_WhenProductAlreadyDeleted()
         {
             var product = new Product { DeletedAt = DateTime.UtcNow };
-            _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(product);
+            _repoMock.Setup(r => r.GetByIdAsync(1, false)).ReturnsAsync(product);
 
             var result = await _service.DeleteProductAsync(1, "tester");
 
@@ -163,7 +163,7 @@ namespace Tests.Application.Services
         public async Task DeleteProductAsync_ShouldMarkDeletedAndReturnTrue_WhenProductExists()
         {
             var product = new Product { Id = 1, Name = "Test" };
-            _repoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(product);
+            _repoMock.Setup(r => r.GetByIdAsync(1, false)).ReturnsAsync(product);
             _repoMock.Setup(r => r.UpdateAsync(product)).Returns(Task.CompletedTask);
 
             var result = await _service.DeleteProductAsync(1, "tester");
